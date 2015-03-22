@@ -1,6 +1,6 @@
-/*! angular-shims-placeholder - v0.3.4 - 2014-12-17
+/*! angular-shims-placeholder - vcustom.0.3.5 - 2015-03-23
 * https://github.com/cvn/angular-shims-placeholder
-* Copyright (c) 2014 Chad von Nau; Licensed MIT */
+* Copyright (c) 2015 Chad von Nau; Licensed MIT */
 (function (angular, document, undefined) {
   'use strict';
   angular.module('ng.shims.placeholder', []).service('placeholderSniffer', [
@@ -49,10 +49,16 @@
           elem.bind('blur', updateValue);
           if (!ngModel) {
             elem.bind('change', updateValue);
+          } else {
+            ngModel.$viewChangeListeners.push(function () {
+              updateValue();
+            });
           }
           if (ngModel) {
+            var oldRender = ngModel.$render;
             ngModel.$render = function () {
-              setValue(ngModel.$viewValue);
+              oldRender();
+              updateValue();
               if (domElem === document.activeElement && !elem.val()) {
                 domElem.select();
               }
